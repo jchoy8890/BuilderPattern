@@ -51,12 +51,12 @@ public class CustomLog {
 
 	public static class Builder {
 
-		private boolean flagInitialize;
+		public boolean flagInitialize;
 		private boolean logDB = false;
 		private boolean logFile = true;
 		private boolean logConsole = true;
 		private String message;
-		private int logLevel = Constants.LEVEL_INFO;
+		private int logLevel;
 
 		public Builder(String message) {
 			this.message = message;
@@ -108,10 +108,7 @@ public class CustomLog {
 	}
 
 	private void printConsole() {
-		if (logLevel == Constants.LEVEL_ERROR)
-			System.out.println("Error: " + message);
-		else
-			System.out.println("Info: " + message);
+		System.out.println(getTypeLog().concat(Constants.CONSOLE_SEPARATOR.concat(message)));
 	}
 
 	private void printFile() {
@@ -164,6 +161,17 @@ public class CustomLog {
 			return Level.WARNING;
 		return Level.INFO;
 	}
+	
+	
+	private String getTypeLog() {
+		switch(logLevel) {
+		case Constants.LEVEL_ERROR: return "Error";
+		case Constants.LEVEL_WARN:  return "Warning";
+		case Constants.LEVEL_DEBUG: return "Debug";
+		default: return "Info";
+		}
+	}
+
 
 	public boolean isFlagInitialize() {
 		return flagInitialize;

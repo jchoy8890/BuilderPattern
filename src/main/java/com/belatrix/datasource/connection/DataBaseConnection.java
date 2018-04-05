@@ -14,42 +14,51 @@ public class DataBaseConnection {
 	private static String user;
 	private static String pwd;
 	private static String url;
+	private static Connection cn;
 
-	private static void readProperties() {
-		props = PropertiesUtil.loadProperties();
-		user = props.getProperty(Constants.PROP_DB_USER);
-		pwd = props.getProperty(Constants.PROP_DB_PWD);
-		url = props.getProperty(Constants.PROP_DB_URL);
+	private static boolean readProperties() {
+		props	= PropertiesUtil.loadProperties();
+		if(props != null) {
+			user	= props.getProperty(Constants.PROP_DB_USER);
+			pwd		= props.getProperty(Constants.PROP_DB_PWD);
+			url		= props.getProperty(Constants.PROP_DB_URL);
+			return true;
+		}
+		return false;
 	}
 
 	public static Connection getBelatrixDBConnection() {
-		Connection cn = null;
 		try {
-			readProperties();
-			Class.forName(Constants.PROP_DB_CLASS);
-			cn = DriverManager.getConnection(url, user, pwd);
+			if (cn == null) {
+				if(readProperties()) {
+					Class.forName(Constants.PROP_DB_CLASS);
+					cn = DriverManager.getConnection(url, user, pwd);
+					return cn;
+				}
+				new CustomLog
+				.Builder("Connection not created because the parameters doesn't valid")
+				.build()
+				.saveLog();
+			}
 		} catch (Exception e) {
 			new CustomLog
-			.Builder(e.getMessage())
-			.build()
-			.saveLog();
-			cn = null;
+				.Builder(e.getMessage())
+				.build()
+				.saveLog();
 		}
 		return cn;
 	}
-	
+
 	public static Connection getBelatrixDBConnectionWithOtherUser(String user) {
 		Connection cn = null;
 		try {
-			readProperties();
 			Class.forName(Constants.PROP_DB_CLASS);
 			cn = DriverManager.getConnection(url, user, pwd);
 		} catch (Exception e) {
 			new CustomLog
 				.Builder(e.getMessage())
 				.build()
-				.saveLog();			
-			cn = null;
+				.saveLog();
 		}
 		return cn;
 	}

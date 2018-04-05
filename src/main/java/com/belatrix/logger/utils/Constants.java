@@ -12,6 +12,7 @@ public class Constants {
 	public static final String PROP_DB_URL = "database.connection.url";
 	public static final String PROP_DB_CLASS = "com.mysql.jdbc.Driver";
 	
+	// Change the path file
 	public static final String LOG_FILE = "/home/jchoy/developer/customLog.log";
 	
 	public static final String CONSOLE_SEPARATOR = " - ";

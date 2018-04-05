@@ -80,12 +80,15 @@ public class CustomLog {
 	}
 
 	public void saveLog() {
+		if (flagInitialize)
+			return;
 		if (logConsole)
-			System.out.println("Save into console");
+			System.out.println(message);
 		if (logFile)
-			System.out.println("Save into file");
+			System.out.println(message);
 		if (logDB)
-			System.out.println("Save into Database");
+			System.out.println(message);
+
 	}
 
 	public boolean isFlagInitialize() {

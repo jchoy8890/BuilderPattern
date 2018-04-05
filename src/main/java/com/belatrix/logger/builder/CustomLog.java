@@ -1,5 +1,8 @@
 package com.belatrix.logger.builder;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.belatrix.logger.utils.Constants;
 
 /**
@@ -28,6 +31,7 @@ public class CustomLog {
 	private boolean logConsole;
 	private int logLevel;
 	private String message;
+	private Logger logger;
 
 	private CustomLog() {
 
@@ -80,15 +84,37 @@ public class CustomLog {
 	}
 
 	public void saveLog() {
+		Level level = getLevel();
 		if (flagInitialize)
 			return;
 		if (logConsole)
-			System.out.println(message);
+			printConsole();
 		if (logFile)
-			System.out.println(message);
+			printFile();
 		if (logDB)
 			System.out.println(message);
+	}
 
+	private void printConsole() {
+		if (logLevel == Constants.LEVEL_ERROR)
+			System.err.println("Error: " + message);
+		else
+			System.err.println("Info: " + message);
+	}
+
+	private void printFile() {
+		logger.log(Level.INFO, message);
+	}
+
+	private Level getLevel() {
+		Level level = Level.INFO;
+		if (logLevel == Constants.LEVEL_ERROR)
+			level = Level.SEVERE;
+		if (logLevel == Constants.LEVEL_DEBUG)
+			level = Level.FINE;
+		if (logLevel == Constants.LEVEL_WARN)
+			level = Level.WARNING;
+		return level;
 	}
 
 	public boolean isFlagInitialize() {
@@ -139,10 +165,19 @@ public class CustomLog {
 		this.message = message;
 	}
 
+	public Logger getLogger() {
+		return logger;
+	}
+
+	public void setLogger(Logger logger) {
+		this.logger = logger;
+	}
+
 	@Override
 	public String toString() {
 		return "CustomLog [flagInitialize=" + flagInitialize + ", logDB=" + logDB + ", logFile=" + logFile
-				+ ", logConsole=" + logConsole + ", logLevel=" + logLevel + ", message=" + message + "]";
+				+ ", logConsole=" + logConsole + ", logLevel=" + logLevel + ", message=" + message + ", logger="
+				+ logger + "]";
 	}
 
 }

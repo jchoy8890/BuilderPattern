@@ -11,5 +11,20 @@ public class Constants {
 	public static final String PROP_DB_PWD = "database.connection.password";
 	public static final String PROP_DB_URL = "database.connection.url";
 	public static final String PROP_DB_CLASS = "com.mysql.jdbc.Driver";
+	
+	public static final String LOG_FILE = "/home/jchoy/developer/customLog.log";
+	
+	public static final String CONSOLE_SEPARATOR = " - ";
+	
+	public static final String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+	
+	public static final String QUERY_LOG_DB = "INSERT INTO Log_Values (message, messageDetail) values (?,?)";
+	
+	public static final String FILE_DB_PROPERTIES = "database.properties";
+	
+	public static final String SCHEMA_DB = "belatrix";
+	
+	public static final String OTHER_USER_DB = "otherUser";
+	public static final String OTHER_SCHEMA_DB = "otherSchema";
 
 }

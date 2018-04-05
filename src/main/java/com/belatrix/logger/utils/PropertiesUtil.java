@@ -11,12 +11,15 @@ public class PropertiesUtil {
 	public static Properties loadProperties() {
 		Properties props = new Properties();
 		try {
-			String fileName = "database.properties";
 			InputStream resourceStream = ClassLoader
-					.getSystemResourceAsStream(fileName);
+					.getSystemResourceAsStream(Constants.FILE_DB_PROPERTIES);
 			props.load(resourceStream);
 		} catch (IOException e) {
-			new CustomLog.Builder(e.getMessage()).build().saveLog();
+			new CustomLog
+			.Builder(e.getMessage())
+			.disableFile()
+			.build()
+			.saveLog();
 			return null;
 		}
 		return props;

@@ -22,14 +22,33 @@ public class DataBaseConnection {
 		url = props.getProperty(Constants.PROP_DB_URL);
 	}
 
-	public static Connection getConnection() {
+	public static Connection getBelatrixDBConnection() {
 		Connection cn = null;
 		try {
 			readProperties();
 			Class.forName(Constants.PROP_DB_CLASS);
 			cn = DriverManager.getConnection(url, user, pwd);
 		} catch (Exception e) {
-			new CustomLog.Builder(e.getMessage()).build().saveLog();
+			new CustomLog
+			.Builder(e.getMessage())
+			.build()
+			.saveLog();
+			cn = null;
+		}
+		return cn;
+	}
+	
+	public static Connection getBelatrixDBConnectionWithOtherUser(String user) {
+		Connection cn = null;
+		try {
+			readProperties();
+			Class.forName(Constants.PROP_DB_CLASS);
+			cn = DriverManager.getConnection(url, user, pwd);
+		} catch (Exception e) {
+			new CustomLog
+				.Builder(e.getMessage())
+				.build()
+				.saveLog();			
 			cn = null;
 		}
 		return cn;

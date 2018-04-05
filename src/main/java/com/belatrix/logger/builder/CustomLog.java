@@ -1,8 +1,17 @@
 package com.belatrix.logger.builder;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
+import com.belatrix.datasource.connection.DataBaseConnection;
 import com.belatrix.logger.utils.Constants;
 
 /**
@@ -31,7 +40,10 @@ public class CustomLog {
 	private boolean logConsole;
 	private int logLevel;
 	private String message;
-	private Logger logger;
+	private final Logger logger = Logger.getLogger(CustomLog.class.getName());
+	private Level levelLogger;
+	private FileHandler fileHandler;
+	private StringBuilder query;
 
 	private CustomLog() {
 
@@ -84,37 +96,73 @@ public class CustomLog {
 	}
 
 	public void saveLog() {
-		Level level = getLevel();
-		if (flagInitialize)
+		levelLogger = getLevel();
+		if (!flagInitialize)
 			return;
 		if (logConsole)
 			printConsole();
 		if (logFile)
 			printFile();
 		if (logDB)
-			System.out.println(message);
+			saveDB();
 	}
 
 	private void printConsole() {
 		if (logLevel == Constants.LEVEL_ERROR)
-			System.err.println("Error: " + message);
+			System.out.println("Error: " + message);
 		else
-			System.err.println("Info: " + message);
+			System.out.println("Info: " + message);
 	}
 
 	private void printFile() {
+		try {
+			fileHandler = new FileHandler(Constants.LOG_FILE);
+			SimpleFormatter formater = new SimpleFormatter();
+			fileHandler.setFormatter(formater);
+			logger.addHandler(fileHandler);
+			logger.log(levelLogger, message);
+		} catch (SecurityException e) {
+			message = e.getMessage();
+			printConsole();
+		} catch (IOException e) {
+			message = e.getMessage();
+			printConsole();
+		}
 		logger.log(Level.INFO, message);
 	}
 
+	private void saveDB() {
+		Connection cn = DataBaseConnection.getBelatrixDBConnection();
+		StringBuilder messageDetail = new StringBuilder();
+		SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
+		Date dt = new Date();
+		messageDetail.append(levelLogger.toString());
+		messageDetail.append(Constants.CONSOLE_SEPARATOR);
+		messageDetail.append(sdf.format(dt));
+		messageDetail.append(Constants.CONSOLE_SEPARATOR);
+		messageDetail.append(message);
+		query = new StringBuilder();
+		query.append(Constants.QUERY_LOG_DB);
+		try {
+			PreparedStatement pst = cn.prepareStatement(query.toString());
+			pst.setString(1, message);
+			pst.setString(2, messageDetail.toString());
+			pst.executeUpdate();
+		} catch (SQLException e) {
+			message = e.getMessage();
+			printConsole();
+			printFile();
+		}
+	}
+
 	private Level getLevel() {
-		Level level = Level.INFO;
 		if (logLevel == Constants.LEVEL_ERROR)
-			level = Level.SEVERE;
+			return Level.SEVERE;
 		if (logLevel == Constants.LEVEL_DEBUG)
-			level = Level.FINE;
+			return Level.FINE;
 		if (logLevel == Constants.LEVEL_WARN)
-			level = Level.WARNING;
-		return level;
+			return Level.WARNING;
+		return Level.INFO;
 	}
 
 	public boolean isFlagInitialize() {
@@ -167,10 +215,6 @@ public class CustomLog {
 
 	public Logger getLogger() {
 		return logger;
-	}
-
-	public void setLogger(Logger logger) {
-		this.logger = logger;
 	}
 
 	@Override

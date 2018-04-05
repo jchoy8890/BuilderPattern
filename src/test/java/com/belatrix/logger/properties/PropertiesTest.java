@@ -11,7 +11,7 @@ import org.junit.Test;
 import com.belatrix.logger.utils.PropertiesUtil;
 
 public class PropertiesTest {
-	
+
 	static Properties props;
 
 	@BeforeClass
@@ -28,7 +28,6 @@ public class PropertiesTest {
 	@Ignore
 	@Test
 	public void failedLoadProperties() {
-		System.out.println(props);
 		assertNull(props);
 	}
 
@@ -39,11 +38,15 @@ public class PropertiesTest {
 
 	@Test
 	public void readAttributesProperties() {
-		if (props.getProperty("database.connection.url") == null)
+		String url, user, password;
+		url = props.getProperty("database.connection.url");
+		user = props.getProperty("database.connection.user");
+		password = props.getProperty("database.connection.password");
+		if (url == null || url.equals(""))
 			fail("Attribute not found!");
-		if (props.getProperty("database.connection.user") == null)
+		if (user == null || user.equals(""))
 			fail("Attribute not found!");
-		if (props.getProperty("database.connection.password") == null)
+		if (password == null || password.equals(""))
 			fail("Attribute not found!");
 		assertTrue(true);
 	}

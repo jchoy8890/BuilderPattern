@@ -1,30 +1,27 @@
 package com.belatrix.logger.builder;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.belatrix.datasource.connection.DataBaseConnection;
 import com.belatrix.logger.utils.Constants;
 
 public class Deploy {
 
 	public static void main(String[] args) throws SQLException {
 		CustomLog customLog = new CustomLog
-				.Builder("Error Message")
-				.setLevel(Constants.LEVEL_ERROR)
+				.Builder("Info message for testing with database store")
+				.setLevel(Constants.LEVEL_INFO)
+				// Enabling log for Database
 				.enableLogDB()
 				.build();
+		customLog.saveLog();
+		
+		CustomLog customLog2 = new CustomLog
+				.Builder("Error or severe message for testing")
+				.setLevel(Constants.LEVEL_ERROR)
+				.build();
+		customLog2.saveLog();
 
-		System.out.println(customLog);
-		CustomLog customLog2 = new CustomLog.Builder("Info Message").build();
-		System.out.println(customLog2);
-
-		// System.out.println(props);
-		// customLog.saveLog();
-		// customLog2.saveLog();
-
-		Connection cn = DataBaseConnection.getConnection();
-		System.out.println(cn.getCatalog().toString());
+	
 	}
 
 }
